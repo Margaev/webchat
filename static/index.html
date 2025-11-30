@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пупс Чат</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 95%;
+    max-width: 600px;
+    height: 95%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Header */
+h2 {
+    margin: 0;
+    padding: 16px;
+    text-align: center;
+    background: #007bff;
+    color: white;
+}
+
+/* Log area */
+#log {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    resize: none;
+    overflow-y: auto;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* Input row */
+.input-row {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    border-top: 1px solid #ccc;
+}
+
+/* Message input */
+#msg {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+/* Send button */
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Username screen */
+#username-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    gap: 20px;
+}
+
+#username-input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 80%;
+    max-width: 300px;
+    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+    h2 { font-size: 1.2rem; }
+    #msg, #username-input { font-size: 0.9rem; }
+    button { padding: 8px 12px; font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <h2>Пупс Чат</h2>
+
+    <!-- Username input screen -->
+    <div id="username-screen">
+        <input id="username-input" placeholder="Enter your name" />
+        <button id="start-chat-btn">Start Chat</button>
+    </div>
+
+    <!-- Chat screen -->
+    <textarea id="log" readonly style="display: none;"></textarea>
+    <div class="input-row" id="chat-input-row" style="display: none;">
+        <input id="msg" type="text" placeholder="Type a message…" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+
+<script>
+let ws;
+let username;
+
+// Elements
+const usernameScreen = document.getElementById("username-screen");
+const usernameInput = document.getElementById("username-input");
+const log = document.getElementById("log");
+const chatInputRow = document.getElementById("chat-input-row");
+const msgInput = document.getElementById("msg");
+
+// Start chat after entering username
+document.getElementById("start-chat-btn").onclick = () => {
+    username = usernameInput.value.trim() || "Anonymous";
+    if (!username) return alert("Please enter your name");
+
+    // Hide username screen, show chat
+    usernameScreen.style.display = "none";
+    log.style.display = "block";
+    chatInputRow.style.display = "flex";
+
+    // Open WebSocket
+    ws = new WebSocket("ws://127.0.0.1:8000/chat/ws");
+
+    ws.onopen = () => {
+        // Send username to backend
+        ws.send(JSON.stringify({ type: "set_name", name: username }));
+    };
+
+    ws.onmessage = (event) => {
+        log.value += event.data + "\n";
+        log.scrollTop = log.scrollHeight; // auto-scroll
+    };
+};
+
+function sendMessage() {
+    const text = msgInput.value.trim();
+    if (text !== "" && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "message", text }));
+    }
+    msgInput.value = "";
+}
+</script>
+
+</body>
+</html>
