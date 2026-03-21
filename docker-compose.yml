@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://github.com/compose-spec/compose-go/blob/main/schema/compose-spec.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/docker/compose/refs/heads/v1/compose/config/compose_spec.json
 
 services:
   redis:
@@ -33,5 +33,5 @@ services:
         read_only: true
     ports:
       - 80:80
-    depends_on: 
+    depends_on:
       - backend

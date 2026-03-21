@@ -1,0 +1,24 @@
+server:
+  service:
+    type: NodePort
+  ingress:
+    enabled: false
+
+configs:
+  params:
+    server.insecure: true
+
+dex:
+  enabled: false
+
+controller:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+repoServer:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
