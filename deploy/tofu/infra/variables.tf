@@ -4,13 +4,13 @@ variable "kubeconfig_path" {
   default     = "~/.kube/config"
 }
 
-variable "argo_cd_namespace" {
+variable "argocd_namespace" {
   description = "ArgoCD namespace"
   type        = string
-  default     = "argo-cd"
+  default     = "argocd"
 }
 
-variable "argo_cd_chart_version" {
+variable "argocd_chart_version" {
   description = "ArgoCD Helm chart version"
   type        = string
   default     = "9.4.15"

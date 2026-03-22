@@ -2,6 +2,11 @@
 
 version: "3"
 
+includes:
+  deploy:tofu:
+    taskfile: ./deploy/tofu/Taskfile.yml
+    dir: ./deploy/tofu/
+
 vars:
   GREETING: Hello, World!
 

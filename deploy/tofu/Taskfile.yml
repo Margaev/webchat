@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  apply-infra:
+    dir: infra
+    cmds:
+      - pwd
+      - tofu apply -auto-approve -var-file="../common.tfvars"
+
+  get-argo-password:
+    cmds:
+      - kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+    silent: true
+
+  update-argo-password-tfvars:
+    cmds:
+      - |
+        FILE="gitops/secret.tfvars"
+        VAR="argocd_password"
+        PASSWORD=$(task get-argo-password)
+
+        if [ -z "$PASSWORD" ]; then
+          echo "Failed to fetch ArgoCD password"
+          exit 1
+        fi
+
+        # Create file if it doesn't exist
+        touch "$FILE"
+
+        # Rewrite file: remove any existing line with the var and append new value
+        grep -v "^${VAR}\s*=" "$FILE" > "${FILE}.tmp" || true
+        echo "${VAR}=\"${PASSWORD}\"" >> "${FILE}.tmp"
+        mv "${FILE}.tmp" "$FILE"
+    silent: true
+
+  apply-gitops:
+    dir: gitops
+    cmds:
+      - tofu apply -auto-approve -var-file="../common.tfvars" -var-file="secret.tfvars"
