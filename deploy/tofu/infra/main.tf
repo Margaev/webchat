@@ -18,7 +18,29 @@ resource "helm_release" "argocd" {
   ]
 }
 
-resource "kubernetes_manifest" "application_set" {
+resource "kubernetes_manifest" "argocd_project" {
+  manifest = yamldecode(<<-EOT
+    apiVersion: argoproj.io/v1alpha1
+    kind: AppProject
+    metadata:
+      name: webchat
+      namespace: ${var.argocd_namespace}
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      description: Webchat project
+      sourceRepos:
+      - '*'
+      destinations:
+      - namespace: "*"
+        server: https://kubernetes.default.svc
+    EOT
+  )
+
+  depends_on = [helm_release.argocd]
+}
+
+resource "kubernetes_manifest" "argocd_application_set" {
   manifest = yamldecode(<<-EOT
     apiVersion: argoproj.io/v1alpha1
     kind: ApplicationSet
@@ -40,7 +62,7 @@ resource "kubernetes_manifest" "application_set" {
         spec:
           project: "webchat"
           source:
-            repoURL: https://github.com/argoproj/argo-cd.git
+            repoURL: https://github.com/Margaev/webchat.git
             targetRevision: HEAD
             path: '{{.path.path}}'
           destination:
@@ -52,5 +74,8 @@ resource "kubernetes_manifest" "application_set" {
     EOT
   )
 
-  depends_on = [helm_release.argocd]
+  depends_on = [
+    helm_release.argocd,
+    kubernetes_manifest.argocd_project,
+  ]
 }
