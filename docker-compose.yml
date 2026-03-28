@@ -5,33 +5,26 @@ services:
     image: redis:8.6.0
     ports:
       - 6379:6379
+    restart: always
 
   backend:
     build:
-      context: .
+      context: ./backend/
+      dockerfile: Dockerfile
     expose:
       - "8000"
     depends_on:
       - redis
-    env_file: ".env"
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    volumes:
-      - ./:/app
 
   proxy:
-    image: nginx
-    volumes:
-      - type: bind
-        source: ./proxy/nginx.conf
-        target: /etc/nginx/conf.d/default.conf
-        read_only: true
-      - type: bind
-        source: ./static/
-        target: /data/www/
-        read_only: true
+    build:
+      context: ./web/
+      dockerfile: Dockerfile
     ports:
       - 80:80
     depends_on:
       - backend
+    restart: always

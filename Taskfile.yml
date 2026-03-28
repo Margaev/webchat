@@ -8,11 +8,47 @@ includes:
     dir: ./deploy/tofu/
 
 vars:
-  GREETING: Hello, World!
+  APP_NAME: "webchat"
+  GIT_REV:
+    sh: git describe --tags --always
+  REGISTRY_HOST: '{{.REGISTRY_HOST | default "localhost"}}'
+  REGISTRY_PORT: '{{.REGISTRY_PORT | default "5005"}}'
+  APP_IMAGE_NAME: "{{.REGISTRY_HOST}}:{{.REGISTRY_PORT}}/{{.APP_NAME}}"
+  APP_IMAGE_TAG: "{{.APP_IMAGE_NAME}}:{{.GIT_REV}}"
 
 tasks:
-  default:
-    desc: Print a greeting message
+  run-container-registry:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - docker compose -f ./registry.docker-compose.yml up -d
+
+  stop-container-registry:
+    cmds:
+      - docker compose -f ./registry.docker-compose.yml down
+
+  build-webchat:
+    dir: ./backend/
+    cmds:
+      - docker build -t webchat -f Dockerfile .
+    deps:
+      - run-container-registry
+
+  push-webchat:
+    dir: ./backend/
+    cmds:
+      - docker push webchat
+    deps:
+      - build-webchat
+
+  build-web:
+    dir: ./web/
+    cmds:
+      - docker build -t web -f Dockerfile .
+    deps:
+      - run-container-registry
+
+  push-web:
+    dir: ./web/
+    cmds:
+      - docker push web
+    deps:
+      - build-webchat

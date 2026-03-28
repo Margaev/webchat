@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webchat
+  labels:
+    app: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat
+  template:
+    metadata:
+      labels:
+        app: webchat
+    spec:
+      containers:
+        - env:
+            - name: REDIS_HOST
+              value: redis.webchat.svc.cluster.local
+            - name: REDIS_PORT
+              value: "6379"
+          image: webchat
+          imagePullPolicy: IfNotPresent
+          name: webchat
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+      restartPolicy: Always

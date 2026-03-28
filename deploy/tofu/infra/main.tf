@@ -19,60 +19,17 @@ resource "helm_release" "argocd" {
 }
 
 resource "kubernetes_manifest" "argocd_project" {
-  manifest = yamldecode(<<-EOT
-    apiVersion: argoproj.io/v1alpha1
-    kind: AppProject
-    metadata:
-      name: webchat
-      namespace: ${var.argocd_namespace}
-      finalizers:
-        - resources-finalizer.argocd.argoproj.io
-    spec:
-      description: Webchat project
-      sourceRepos:
-      - '*'
-      destinations:
-      - namespace: "*"
-        server: https://kubernetes.default.svc
-    EOT
-  )
+  manifest = yamldecode(templatefile("${path.module}/templates/argocd-project.yaml.tftpl", {
+    argocd_namespace = var.argocd_namespace
+  }))
 
   depends_on = [helm_release.argocd]
 }
 
 resource "kubernetes_manifest" "argocd_application_set" {
-  manifest = yamldecode(<<-EOT
-    apiVersion: argoproj.io/v1alpha1
-    kind: ApplicationSet
-    metadata:
-      name: gitops
-      namespace: ${var.argocd_namespace}
-    spec:
-      goTemplate: true
-      goTemplateOptions: ["missingkey=error"]
-      generators:
-      - git:
-          repoURL: https://github.com/Margaev/webchat.git
-          revision: HEAD
-          directories:
-          - path: deploy/manifests/*
-      template:
-        metadata:
-          name: '{{.path.basename}}'
-        spec:
-          project: "webchat"
-          source:
-            repoURL: https://github.com/Margaev/webchat.git
-            targetRevision: HEAD
-            path: '{{.path.path}}'
-          destination:
-            server: https://kubernetes.default.svc
-            namespace: '{{.path.basename}}'
-          syncPolicy:
-            syncOptions:
-            - CreateNamespace=true
-    EOT
-  )
+  manifest = yamldecode(templatefile("${path.module}/templates/argocd-application-set.yaml.tftpl", {
+    argocd_namespace = var.argocd_namespace
+  }))
 
   depends_on = [
     helm_release.argocd,

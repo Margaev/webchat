@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/docker/compose/refs/heads/v1/compose/config/compose_spec.json
+
+services:
+  container-registry:
+    image: registry:3.0.0
+    ports:
+      - ${REGISTRY_HOST_PORT:-5005}:5000
+    restart: always
