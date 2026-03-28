@@ -7,10 +7,14 @@ terraform {
   }
 }
 
+provider "kubernetes" {
+  config_path = var.kubeconfig_path
+}
+
 provider "argocd" {
   port_forward_with_namespace = "custom-argocd-namespace"
-  kubernetes {
-    config_context = "kind-argocd"
+  kubernetes = {
+    config_path = var.kubeconfig_path
   }
   username = "admin"
   password = var.argocd_password
