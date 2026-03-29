@@ -15,8 +15,7 @@ spec:
         app: web
     spec:
       containers:
-        - image: web:0.1.0
-          imagePullPolicy: IfNotPresent
+        - image: localhost:5001/web:0.1.0
           name: web
           ports:
             - containerPort: 80

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+includes:
+  docker:
+    taskfile: ../Taskfile.docker.yml
+
+tasks:
+  build:
+    cmds:
+      - task: docker:build
+        vars: { APP: "web" }
+
+  push:
+    deps: [build]
+    cmds:
+      - task: docker:push
+        vars: { APP: "web" }

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+vars:
+  GIT_REV:
+    sh: git describe --tags --always
+  REGISTRY_HOST: '{{.REGISTRY_HOST | default "localhost"}}'
+  REGISTRY_PORT: '{{.REGISTRY_PORT | default "5001"}}'
+  REGISTRY: "{{.REGISTRY_HOST}}:{{.REGISTRY_PORT}}"
+
+tasks:
+  build:
+    desc: "Build an image. Usage: task build APP=backend DIR=./backend"
+    dir: '{{.DIR | default "."}}'
+    requires:
+      vars: [APP]
+    vars:
+      FULL_IMAGE: "{{.REGISTRY}}/{{.APP}}:{{.GIT_REV}}"
+    cmds:
+      - echo {{.FULL_IMAGE}}
+      - docker build -t {{.FULL_IMAGE}} .
+
+  push:
+    desc: "Push an image. Usage: task push APP=backend"
+    requires:
+      vars: [APP]
+    vars:
+      FULL_IMAGE: "{{.REGISTRY}}/{{.APP}}:{{.GIT_REV}}"
+    cmds:
+      - docker push {{.FULL_IMAGE}}
