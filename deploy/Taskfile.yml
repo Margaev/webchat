@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+includes:
+  tofu:
+    taskfile: ./tofu/Taskfile.yml
+    dir: ./tofu/
+
+tasks:
+  start-kind-with-registry:
+    cmds:
+      - ./kind-with-registry.sh
+
+  stop-kind-with-registry:
+    cmds:
+      - ./stop-kind-with-registry.sh

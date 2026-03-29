@@ -3,6 +3,14 @@
 version: "3"
 
 tasks:
+  _init:
+    internal: true
+    dir: "{{.DIR}}"
+    requires:
+      vars: [DIR]
+    cmds:
+      - tofu init
+
   _apply:
     internal: true
     dir: "{{.DIR}}"
@@ -11,16 +19,56 @@ tasks:
     cmds:
       - tofu apply -auto-approve
 
+  _destroy:
+    internal: true
+    dir: "{{.DIR}}"
+    requires:
+      vars: [DIR]
+    cmds:
+      - tofu destroy -auto-approve
+
+  init-infra:
+    desc: Init infra module
+    cmds:
+      - task: _init
+        vars: { DIR: "./infra" }
+
   apply-infra:
-    desc: Apply infrastructure module
+    desc: Apply infra module
+    deps:
+      - init-infra
     cmds:
       - task: _apply
         vars: { DIR: "./infra" }
 
+  destroy-infra:
+    desc: Destroy infra module
+    deps:
+      - init-infra
+    cmds:
+      - task: _destroy
+        vars: { DIR: "./infra" }
+
+  init-gitops:
+    desc: Init gitops module
+    cmds:
+      - task: _init
+        vars: { DIR: "./gitops" }
+
   apply-gitops:
     desc: Apply gitops module
+    deps:
+      - init-gitops
     cmds:
       - task: _apply
+        vars: { DIR: "./gitops" }
+
+  destroy-gitops:
+    desc: Destroy gitops module
+    deps:
+      - init-gitops
+    cmds:
+      - task: _destroy
         vars: { DIR: "./gitops" }
 
   apply-all:
@@ -29,7 +77,14 @@ tasks:
       - task: apply-infra
       - task: apply-gitops
 
+  destroy-all:
+    desc: Destroy all modules in order
+    cmds:
+      - task: destroy-gitops
+      - task: destroy-infra
+
   get-argo-password:
+    desc: "Get the ArgoCD UI password. Usage: `task get-argo-password | pbcopy`"
     cmds:
       - kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
     silent: true

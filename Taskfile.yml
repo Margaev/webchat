@@ -3,9 +3,9 @@
 version: "3"
 
 includes:
-  deploy:tofu:
-    taskfile: ./deploy/tofu/Taskfile.yml
-    dir: ./deploy/tofu/
+  deploy:
+    taskfile: ./deploy/Taskfile.yml
+    dir: ./deploy/
   docker:
     taskfile: ./Taskfile.docker.yml
   backend:
@@ -19,3 +19,14 @@ tasks:
   push-all:
     desc: Build and push all images
     deps: [backend:push, web:push]
+
+  setup:
+    cmds:
+      - task: deploy:start-kind-with-registry
+      - task: deploy:tofu:apply-all
+      - task: push-all
+
+  teardown:
+    cmds:
+      - task: deploy:tofu:destroy-all
+      - task: deploy:stop-kind-with-registry
