@@ -3,11 +3,31 @@
 version: "3"
 
 tasks:
-  apply-infra:
-    dir: infra
+  _apply:
+    internal: true
+    dir: "{{.DIR}}"
+    requires:
+      vars: [DIR]
     cmds:
-      - pwd
-      - tofu apply -auto-approve -var-file="../common.tfvars"
+      - tofu apply -auto-approve
+
+  apply-infra:
+    desc: Apply infrastructure module
+    cmds:
+      - task: _apply
+        vars: { DIR: "./infra" }
+
+  apply-gitops:
+    desc: Apply gitops module
+    cmds:
+      - task: _apply
+        vars: { DIR: "./gitops" }
+
+  apply-all:
+    desc: Apply all modules in order
+    cmds:
+      - task: apply-infra
+      - task: apply-gitops
 
   get-argo-password:
     cmds:
