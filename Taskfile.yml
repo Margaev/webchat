@@ -20,11 +20,17 @@ tasks:
     desc: Build and push all images
     deps: [backend:push, web:push]
 
+  base-push-all:
+    desc: Build and push the initial versions of images
+    cmds:
+      - task backend:push IMAGE_TAG=0.1.0
+      - task web:push IMAGE_TAG=0.1.0
+
   setup:
     cmds:
       - task: deploy:start-kind-with-registry
       - task: deploy:tofu:apply-all
-      - task: push-all
+      - task: base-push-all
 
   teardown:
     cmds:

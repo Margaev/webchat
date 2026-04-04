@@ -15,7 +15,8 @@ spec:
         app: web
     spec:
       containers:
-        - image: localhost:5001/web:0.1.2
+        - image: kind-registry:5000/web
+          imagePullPolicy: Always
           name: web
           ports:
             - containerPort: 80

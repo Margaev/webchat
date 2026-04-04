@@ -17,10 +17,11 @@ spec:
       containers:
         - env:
             - name: REDIS_HOST
-              value: redis.webchat.svc.cluster.local
+              value: redis.redis.svc.cluster.local
             - name: REDIS_PORT
               value: "6379"
-          image: localhost:5001/backend:0.1.2
+          image: kind-registry:5000/backend
+          imagePullPolicy: Always
           name: backend
           ports:
             - containerPort: 8000

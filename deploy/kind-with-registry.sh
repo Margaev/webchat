@@ -49,6 +49,18 @@ for node in $(kind get nodes); do
 EOF
 done
 
+CLUSTER_REGISTRY_DIR="/etc/containerd/certs.d/${REGISTRY_NAME}:5000"
+
+for node in $(kind get nodes); do
+  docker exec "${node}" mkdir -p "${CLUSTER_REGISTRY_DIR}"
+  cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${CLUSTER_REGISTRY_DIR}/hosts.toml"
+server = "http://${REGISTRY_NAME}:5000"
+
+[host."http://${REGISTRY_NAME}:5000"]
+  capabilities = ["pull", "resolve"]
+EOF
+done
+
 # 4. Connect the registry to the cluster network if not already connected
 # This allows kind to bootstrap the network but ensures they're on the same network
 if [ "$(docker inspect -f='{{json .NetworkSettings.Networks.kind}}' "${REGISTRY_NAME}")" = 'null' ]; then

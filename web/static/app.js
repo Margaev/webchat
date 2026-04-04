@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Start chat after entering username
     function startChat() {
+        console.log("Pressed startChat button")
         username = usernameInput.value.trim() || "Anonymous";
         if (!username) return alert("Please enter your name");
 

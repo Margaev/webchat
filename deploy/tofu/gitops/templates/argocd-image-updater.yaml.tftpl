@@ -1,0 +1,19 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: my-image-updater
+  namespace: ${argocd_namespace}
+spec:
+  applicationRefs:
+    - namePattern: "backend"
+      images:
+        - alias: "backend"
+          imageName: "kind-registry:5000/backend"
+          commonUpdateSettings:
+            updateStrategy: newest-build
+    - namePattern: "web"
+      images:
+        - alias: "web"
+          imageName: "kind-registry:5000/web"
+          commonUpdateSettings:
+            updateStrategy: newest-build

@@ -12,6 +12,8 @@ spec:
         revision: HEAD
         directories:
           - path: deploy/manifests/*
+          - path: deploy/manifests/environments*
+            exclude: true
   template:
     metadata:
       name: "{{.path.basename}}"
