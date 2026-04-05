@@ -19,6 +19,6 @@ spec:
           imagePullPolicy: Always
           name: web
           ports:
-            - containerPort: 80
+            - containerPort: 8081
               protocol: TCP
       restartPolicy: Always

@@ -6,7 +6,7 @@ metadata:
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
-  ignoreApplicationDifferences:
+  ignoreApplicationDifferences: # ignoring here as image tags are controlled by image updater
     - jsonPointers:
         - /spec/source/kustomize/images
   generators:
