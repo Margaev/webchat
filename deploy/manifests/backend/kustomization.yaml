@@ -7,4 +7,4 @@ resources:
   - backend-service.yaml
 images:
   - name: kind-registry:5000/backend
-    newName: kind-registry:5000/backend
+    newTag: 0.1.0
