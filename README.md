@@ -1,3 +1,5 @@
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+
 # Webchat GitOps (Kind + ArgoCD + OpenTofu)
 
 A real-time communication platform utilizing a Python (FastAPI) backend and a static/Nginx frontend, orchestrated following GitOps practices via ArgoCD and OpenTofu in a Kind-based local Kubernetes environment.
@@ -6,7 +8,7 @@ This project demonstrates a fully automated workflow:
 - Build → Push → GitOps → Deploy
 - Fully local (Kind + local registry)
 - Dynamic multi-app deployment using ArgoCD ApplicationSet
-- Kustomize-based or pure manifests apps
+- Kustomize-based or helm apps
 - Real-time WebSocket chat backed by Redis Pub/Sub
 
 ---
