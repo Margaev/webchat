@@ -7,4 +7,4 @@ resources:
   - redis-service.yaml
 images:
   - name: redis
-    newTag: 8.6.0
+    newTag: 8.6.2
