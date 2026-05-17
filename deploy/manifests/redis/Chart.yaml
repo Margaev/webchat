@@ -3,5 +3,5 @@ name: redis-wrapper
 version: 1.0.0
 dependencies:
   - name: redis
-    version: 19.6.1
+    version: 19.6.4
     repository: https://charts.bitnami.com/bitnami
