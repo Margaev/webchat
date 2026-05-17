@@ -1,0 +1,5 @@
+# Add your Helm overrides for the bitnami redis chart here
+redis:
+  architecture: standalone
+  auth:
+    enabled: false
