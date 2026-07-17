@@ -13,7 +13,7 @@ This project demonstrates a fully automated workflow:
 
 ---
 
-## ✨ Features
+## Features
 
 - Multi-application GitOps using **ApplicationSet** with directory generator
 - Local registry integration with Kind
@@ -28,7 +28,7 @@ This project demonstrates a fully automated workflow:
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 ```mermaid
 graph TD
@@ -76,7 +76,7 @@ graph TD
 ```
 ---
 
-## 🔧 Prerequisites
+## Prerequisites
 - [go-task](https://taskfile.dev/docs/installation)
 - [Docker](https://docs.docker.com/engine/install/)
 - [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
@@ -85,7 +85,7 @@ graph TD
 
 ---
 
-## 🚀 Setup
+## Setup
 
 ### Setup everything
 
@@ -109,7 +109,7 @@ task teardown
 
 ---
 
-## 💬 Application
+## Application
 
 - WebSocket endpoint: `/chat/ws`
 - Real-time chat messages broadcast via Pub/Sub
@@ -118,7 +118,7 @@ task teardown
 
 ---
 
-## 🧪 Development Workflow
+## Development Workflow
 
 ```bash
 # Make changes to backend or frontend
@@ -136,6 +136,6 @@ No manual `kubectl apply` required. The system handles namespace creation, image
 
 ---
 
-## 📝 Considerations
+## Considerations
 - In a production scenario, the git writeback method for argo image updater should be chosen for visibility and more reliable GitOps setup. The argo method was chosen to enable local development, without the need to push anything to git
 - This project is structered as a monorepo. The application code, IaC and GitOps setup is all contained here. In a production environment these components should be decoupled for beter maintainability and more flexible deployment process
